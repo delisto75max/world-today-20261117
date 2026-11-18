@@ -172,7 +172,6 @@ def draw_map(img, d, box, polys, markers):
         if m.get("align") == "right":
             lx -= fw
         ly = max(y0 + 4, min(y1 - 22, my + m.get("ty", 0)))
-        d.line([mx, my, mx + m.get("tx", 0) * 0.45, ly + 9], fill=INK, width=1)
         d.rectangle([lx - 4, ly, lx + fw + 4, ly + 19], fill=PAPER, outline=(202, 194, 180))
         d.text((lx, ly + 15), m["label"], font=f, fill=INK)
         d.ellipse([mx - 6, my - 6, mx + 6, my + 6], fill=RED, outline=PAPER, width=2)
@@ -253,11 +252,12 @@ def icon_bridge(d, x, y, w, h):
 
 
 def icon_trefoil(d, cx, cy, r):
+    bbox = [cx - r, cy - r, cx + r, cy + r]
     for i in range(3):
-        a0 = -90 + i * 120
-        d.pieslice([cx - r, cy - r, cx + r, cy + r], a0 + 7, a0 + 113, fill=INK)
-    d.ellipse([cx - r * 0.30, cy - r * 0.30, cx + r * 0.30, cy + r * 0.30], fill=RED)
-    d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=INK, width=2)
+        mid = -90 + i * 120
+        d.pieslice(bbox, mid - 30, mid + 30, fill=INK)
+    d.ellipse([cx - r * 0.34, cy - r * 0.34, cx + r * 0.34, cy + r * 0.34], fill=PAPER)
+    d.ellipse([cx - r * 0.20, cy - r * 0.20, cx + r * 0.20, cy + r * 0.20], fill=RED)
 
 
 def icon_chart(d, x, y, w, h):
@@ -333,7 +333,7 @@ def build(polys, out):
     rule(d, M, 84, W - M, INK, 3)
 
     f_edit = mono(15)
-    d.text((M, 91), "WORLD EDITION · 9 STORIES · 3 CONTINENTS", font=f_edit, fill=MUTED)
+    d.text((M, 91), "WORLD EDITION · 16 STORIES · 7 ILLUSTRATED", font=f_edit, fill=MUTED)
     right = "FINAL EDITION"
     d.text((W - M - tw(d, right, f_edit), 91), right, font=f_edit, fill=MUTED)
 
@@ -362,7 +362,7 @@ def build(polys, out):
     img.alpha_composite(ill, (632, 168))
 
     # ---------------- map + numbers
-    map_box = (M, 416, 716, 660)
+    map_box = (M, 416, 716, 636)
     markers = [
         {"lon": -77.0, "lat": 38.9, "label": "Washington — Iran claim", "tx": 10, "ty": -30},
         {"lon": 34.5, "lat": 45.2, "label": "Crimea — bridge hit", "tx": 12, "ty": -38},
@@ -373,26 +373,26 @@ def build(polys, out):
     draw_map(img, d, map_box, polys, markers)
 
     px0 = 728
-    d.rectangle([px0, 416, W - M, 660], fill=(236, 231, 220))
-    d.rectangle([px0, 416, W - M, 660], outline=(84, 94, 108), width=1)
+    d.rectangle([px0, 416, W - M, 636], fill=(236, 231, 220))
+    d.rectangle([px0, 416, W - M, 636], outline=(84, 94, 108), width=1)
     tracked(d, (px0 + 14, 436), "THE DAY IN NUMBERS", mono(12), INK, tracking=1)
     rule(d, px0 + 14, 444, W - M - 14, INK, 1)
 
     figures = [("1,400", ("drones Russia says it", "downed over two nights")),
-               ("800+", ("US flights cut or", "delayed in the outage")),
-               ("$7.7m", ("ex-ICC prosecutor", "ordered to pay"))]
-    fy = 452
+               ("800+", ("US flights cut after", "an airline system outage")),
+               ("$7.7m", ("ex-ICC prosecutor Karim", "Khan ordered to pay"))]
+    fy = 450
     for num, lab in figures:
         d.text((px0 + 14, fy + 22), num, font=mono(24), fill=INK, anchor="ls")
         yy = fy + 36
         for ln in lab:
             d.text((px0 + 14, yy), ln, font=sans_r(12), fill=(58, 52, 44))
             yy += 13
-        fy += 64
+        fy += 58
 
     # ---------------- two cards
-    cy0, cy1 = 668, 754
-    cards = [("IRAN 'DIRTY BOMB' CLAIM", "Reported plot on Washington; Tehran denies", "trefoil"),
+    cy0, cy1 = 644, 730
+    cards = [("'DIRTY BOMB' PLOT CLAIM", "Reported Washington target; Tehran denies", "trefoil"),
              ("MARKETS SLIDE", "Oil, gold and stocks fall sharply", "chart")]
     for i, (head, sub, kind) in enumerate(cards):
         x0 = M + i * 482
@@ -419,7 +419,7 @@ def build(polys, out):
     for i, (head, sub, ic) in enumerate(items):
         row, col = divmod(i, 2)
         x0 = M + col * 482
-        y0 = 762 + row * 96
+        y0 = 738 + row * 96
         x1 = x0 + 462
         d.rectangle([x0, y0, x1, y0 + 86], fill=(250, 247, 239))
         d.line([x0, y0, x1, y0], fill=(210, 202, 186), width=1)
@@ -429,14 +429,19 @@ def build(polys, out):
         d.text((x0 + 66, y0 + 56), sub, font=f_ts, fill=(58, 52, 44))
 
     # ---------------- footer
-    rule(d, M, 952, W - M, INK, 2)
+    rule(d, M, 928, W - M, INK, 2)
     f_num = mono(15)
-    tracked(d, (M, 972), "1,400 DOWNED · 800+ FLIGHTS · 9 STORIES · 3 CONTINENTS", f_num, INK)
-    tracked(d, (W - M, 972), "17 NOV 2026", f_num, RED, tracking=1, anchor="right")
-    d.text((M, 990), "ALSO REPORTED · NSA classified network offline in maintenance · Jordan blocks Telegram",
-           font=sans(14), fill=INK)
-    d.text((M, 1008), "Sources: Guardian · AP · Reuters · CNN · Al Jazeera · Euronews · NPR · Anadolu · DW · Times of Israel · Democracy Now",
-           font=sans_r(10), fill=MUTED)
+    tracked(d, (M, 946), "1,400 DOWNED · 800+ FLIGHTS · $7.7M · 16 STORIES", f_num, INK)
+    tracked(d, (W - M, 946), "17 NOV 2026", f_num, RED, tracking=1, anchor="right")
+    f_also = sans(14)
+    d.text((M, 962), "ALSO REPORTED · NSA classified network offline · Jordan blocks Telegram · Jericho attack wounds three",
+           font=f_also, fill=INK)
+    d.text((M, 977), "Five EU states agree Rwanda return hub · Germany urges more Gaza aid · Trump may meet Kim Jong Un",
+           font=f_also, fill=INK)
+    d.text((M, 992), "Quad leaders hail 'peace through strength' · Trump lands in Manila for ASEAN · US rebukes Ukraine's deep strikes at NATO",
+           font=f_also, fill=INK)
+    d.text((M, 1009), "Sources: Guardian · AP · Reuters · CNN · Al Jazeera · Euronews · NPR · Anadolu · DW · Times of Israel · Democracy Now",
+           font=sans_r(8), fill=MUTED)
 
     img.convert("RGB").save(out, "PNG", optimize=True)
     return img
