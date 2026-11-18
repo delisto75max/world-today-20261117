@@ -128,30 +128,13 @@ def ill_cert(d, x, y, w, h):
     d.line([cx + 20, cy - 20, cx - 20, cy + 20], fill=RED, width=5)
 
 
-
-def ill_ballot(d, x, y, w, h):
-    cx, cy = x + w / 2, y + h / 2
-    d.rectangle([cx - 22, cy - 4, cx + 22, cy + 20], fill=(236, 231, 219), outline=INK, width=2)
-    d.line([cx - 12, cy - 4, cx + 12, cy - 4], fill=INK, width=3)
-    d.rectangle([cx - 8, cy - 22, cx + 8, cy - 2], fill=PAPER, outline=INK, width=2)
-    d.line([cx - 4, cy - 14, cx - 1, cy - 10], fill=RED, width=2)
-    d.line([cx - 1, cy - 10, cx + 5, cy - 18], fill=RED, width=2)
-
-
-def ill_warning(d, x, y, w, h):
-    cx, cy = x + w / 2, y + h / 2 + 4
-    d.polygon([(cx, cy - 24), (cx + 26, cy + 18), (cx - 26, cy + 18)], fill=(246, 226, 214), outline=INK)
-    d.line([cx, cy - 10, cx, cy + 6], fill=RED, width=5)
-    d.ellipse([cx - 3, cy + 10, cx + 3, cy + 16], fill=RED)
-
-
 def build(polys, out):
     img = Image.new("RGBA", (W, H), PAPER + (255,))
     d = ImageDraw.Draw(img)
 
     kick = "THE WORLD'S NEWS IN ONE PICTURE"
     d.text((M, 18), kick, font=R.mono(12), fill=INK)
-    right = "51 STORIES · 6 CONTINENTS · ALL FROM TUESDAY"
+    right = "49 STORIES · 6 CONTINENTS · ALL FROM TUESDAY"
     d.text((W - M - R.tw(d, right, R.mono(12)), 18), right, font=R.mono(12), fill=INK)
 
     date = "Tuesday 17 November 2026"
@@ -181,7 +164,7 @@ def build(polys, out):
     rows = [
         [
             ("EUROPE · UKRAINE", "Russian missiles hit Kyiv's bridges", "North and South spans closed; two killed.", "war", ill_kyiv),
-            ("ASIA · POLITICS", "Mongolia's president resigns", "Khurelsukh quits over a railway-corruption claim.", "asia", ill_ballot),
+            ("ASIA · DEFENCE", "Japan scrambles its jets", "Two suspected Russian aircraft enter airspace.", "asia", D.ill_jet),
             ("AMERICAS · TECH", "US tightens AI-chip exports", "Five nations added to the diversion list.", "tech", D.ill_chip),
             ("BUSINESS · MARKETS", "Stocks, oil and gold slide", "Deutsche Bank falls 6% on a data leak.", "money", D.ill_chart),
             ("BUSINESS · TECH", "Nvidia posts $115.8bn quarter", "Revenue doubles; a first without Jensen Huang.", "tech", ill_bars),
@@ -189,7 +172,7 @@ def build(polys, out):
         [
             ("MIDDLE EAST · WEST BANK", "Settlers kill an elderly woman", "Ten wounded in the central West Bank.", "mideast", D.ill_house),
             ("AMERICAS · HEALTH", "Measles-free status revoked", "The US, Mexico and Bolivia lose PAHO status.", "money", ill_cert),
-            ("MIDDLE EAST · GAZA", "Gaza truce 'could collapse'", "The Board of Peace warns the UN Security Council.", "mideast", ill_warning),
+            ("AFRICA · SAFETY", "17 killed in two shootings", "Separate attacks near Pietermaritzburg and Pretoria.", "war", ill_shooting),
             ("ASIA · LABOUR", "Bangladesh garment wage protests", "Tear gas in Dhaka as 500 factories shut.", "asia", ill_garment),
             ("AFRICA · HEALTH", "Ebola cases top 11,000", "5,400 deaths in DR Congo, WHO says.", "war", ill_virus),
         ],
@@ -220,7 +203,6 @@ def build(polys, out):
         ("EUR", "EU sees 1.4% growth, inflation above 3%"),
         ("EUR", "Moldova shuts its airspace over a drone"),
         ("EUR", "Pope Leo XIV struck by a rosary in Peru"),
-        ("ASI", "Japan scrambles jets after Russian aircraft"),
         ("ASI", "Xi hosts Trump and Putin on 19 November"),
         ("ASI", "Trump 'may' meet Kim Jong Un in China"),
         ("ASI", "Trump lands in Manila for ASEAN, Quad"),
@@ -228,7 +210,6 @@ def build(polys, out):
         ("ASI", "Japan offers ASEAN its oil storage"),
         ("ASI", "Four held in North Macedonia attack plot"),
         ("ASI", "Kim Jong Un tours a ski resort with family"),
-        ("AFR", "17 killed in two South African shootings"),
         ("ASI", "Cyclone Akvan nears India's east coast"),
         ("ASI", "Banda Sea 6.6 quake felt in Darwin"),
         ("M.E", "Qatar warns of a Gulf escalation"),
@@ -255,18 +236,18 @@ def build(polys, out):
     ]
     f_reg = R.mono(7)
     col_w = (W - M - lx - 16) / 3
-    per_col = 13
+    per_col = 12
     for i, (region, text) in enumerate(items):
         col, row = divmod(i, per_col)
         x = lx + col * (col_w + 8)
-        yy = my0 + 16 + row * 21
+        yy = my0 + 18 + row * 22
         d.text((x, yy), "%02d" % (i + 1), font=R.mono(8), fill=RED)
         d.text((x + 16, yy), region, font=f_reg, fill=MUTED)
         D.fit_one(d, text, 10, col_w - 20, INK, x + 16, yy + 8)
 
     # footer
     rule(d, M, 900, W - M, INK, 2)
-    d.text((M, 910), "1,400 DOWNED · 800+ FLIGHTS · $7.7M · 51 STORIES", font=R.mono(13), fill=INK)
+    d.text((M, 910), "1,400 DOWNED · 800+ FLIGHTS · $7.7M · 49 STORIES", font=R.mono(13), fill=INK)
     d.text((W - M - R.tw(d, "TUESDAY 17 NOVEMBER 2026", R.mono(11)), 910),
            "TUESDAY 17 NOVEMBER 2026", font=R.mono(11), fill=RED)
     d.text((M, 936), "Every story happened or was first reported on Tuesday 17 November 2026. Contested claims are attributed.",
